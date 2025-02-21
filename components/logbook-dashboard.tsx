@@ -49,8 +49,8 @@ export function LogbookDashboard({ user, onLogout }: LogbookDashboardProps) {
   return (
     <div className="flex flex-col min-h-screen">
       <LogbookHeader userName={user.name} onLogout={onLogout} />
-      <main className="flex-1 p-4 space-y-4 md:p-6 md:space-y-6 bg-muted/40">
-        <div className="max-w-6xl mx-auto space-y-4 md:space-y-6">
+      <main className="flex-1 p-6 space-y-6 bg-muted/40">
+        <div className="max-w-6xl mx-auto space-y-6">
           <ProjectSection userId={user.userId} projects={projects} onProjectsChange={fetchProjects} />
           <LogSection
             userId={user.userId}
