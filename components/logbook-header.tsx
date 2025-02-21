@@ -15,7 +15,7 @@ export function LogbookHeader({ userName, onLogout }: LogbookHeaderProps) {
       </div>
       <div className="flex items-center ml-auto gap-4">
         <span className="text-sm">Welkom, {userName}</span>
-        <Button variant="default" onClick={onLogout} className="text-white hover:text-black">
+        <Button variant="outline" onClick={onLogout} className="text-white hover:text-black">
           Uitloggen
         </Button>
       </div>

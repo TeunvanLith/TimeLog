@@ -1,10 +1,18 @@
 import type React from "react"
+import "./globals.css"
+import { Inter } from "next/font/google"
 import { Toaster } from "react-hot-toast"
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+const inter = Inter({ subsets: ["latin"] })
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
-      <body>
+      <body className={inter.className}>
         {children}
         <Toaster />
       </body>
@@ -12,3 +20,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   )
 }
 
+export const metadata = {
+  title: "Uren Logboek App",
+  description: "Een applicatie voor het bijhouden van gewerkte uren",
+    generator: 'v0.dev'
+}
+
+
+
+import './globals.css'
