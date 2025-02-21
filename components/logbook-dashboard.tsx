@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { LogbookHeader } from "./logbook-header"
 import { ProjectSection } from "./project-section"
 import { LogSection } from "./log-section"
-import { toast } from "react-hot-toast"
 
 interface LogbookDashboardProps {
   user: {
@@ -38,15 +37,11 @@ export function LogbookDashboard({ user, onLogout }: LogbookDashboardProps) {
   const fetchLogs = async () => {
     try {
       const res = await fetch(`/api/logs?userId=${user.userId}`)
-      if (!res.ok) {
-        throw new Error("Failed to fetch logs")
-      }
       const data = await res.json()
       setLogs(data)
       setIsLoading(false)
     } catch (error) {
       console.error("Error fetching logs:", error)
-      toast.error("Fout bij het ophalen van de logs")
       setIsLoading(false)
     }
   }
