@@ -61,9 +61,7 @@
     "express": "latest",
     "mongoose": "latest",
     "dotenv": "latest",
-    "cors": "latest",
-    "react-hot-toast": "latest",
-    "cloudinary": "latest"
+    "cors": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

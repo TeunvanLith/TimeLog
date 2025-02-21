@@ -71,29 +71,36 @@ export function ProjectSection({ userId, projects, onProjectsChange }: ProjectSe
         <CardTitle>Projecten</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="flex gap-4 mb-4">
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 mb-4">
           <Input
             placeholder="Naam van project"
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}
             className="flex-1"
           />
-          <Button type="submit">Project Toevoegen</Button>
+          <Button type="submit" className="w-full sm:w-auto">
+            Project Toevoegen
+          </Button>
         </form>
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
           {projects.map((project) => (
             <div
               key={project._id}
-              className="bg-background text-foreground px-3 py-2 rounded-md flex items-center gap-2"
+              className="bg-background text-foreground px-3 py-2 rounded-md flex items-center justify-between"
             >
-              <span>{project.name}</span>
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(project._id)}>
+              <span className="truncate">{project.name}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 flex-shrink-0"
+                onClick={() => handleDelete(project._id)}
+              >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           ))}
-          {projects.length === 0 && <p className="text-muted-foreground">Nog geen projecten.</p>}
+          {projects.length === 0 && <p className="text-muted-foreground col-span-full">Nog geen projecten.</p>}
         </div>
       </CardContent>
     </Card>
