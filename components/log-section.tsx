@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -34,6 +34,11 @@ export function LogSection({ userId, projects, logs, onLogsChange, isLoading }: 
   const [filterProject, setFilterProject] = useState("all")
   const [photo, setPhoto] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [localLogs, setLocalLogs] = useState(logs)
+
+  useEffect(() => {
+    setLocalLogs(logs)
+  }, [logs])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -61,7 +66,8 @@ export function LogSection({ userId, projects, logs, onLogsChange, isLoading }: 
       })
 
       if (!res.ok) {
-        throw new Error("Failed to create log")
+        const errorData = await res.json()
+        throw new Error(errorData.error || "Failed to create log")
       }
 
       resetForm()
@@ -155,6 +161,69 @@ export function LogSection({ userId, projects, logs, onLogsChange, isLoading }: 
       return sortAscending ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime()
     })
 
+  const renderLogs = () => {
+    if (isLoading) {
+      return <div className="text-center py-4">Laden...</div>
+    }
+
+    if (filteredLogs.length === 0) {
+      return <div className="text-center py-4">Geen logs gevonden.</div>
+    }
+
+    return (
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Datum</TableHead>
+              <TableHead>Uren</TableHead>
+              <TableHead>Project</TableHead>
+              <TableHead>Opmerkingen</TableHead>
+              <TableHead>Foto</TableHead>
+              <TableHead className="text-right">Acties</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredLogs.map((log) => (
+              <TableRow key={log._id}>
+                <TableCell>{format(new Date(log.date), "dd MMMM yyyy", { locale: nl })}</TableCell>
+                <TableCell>{log.hours}</TableCell>
+                <TableCell>{log.projectId.name}</TableCell>
+                <TableCell>{log.remarks}</TableCell>
+                <TableCell>
+                  {log.photoUrl && (
+                    <Image
+                      src={log.photoUrl || "/placeholder.svg"}
+                      alt="Log photo"
+                      width={50}
+                      height={50}
+                      className="rounded-md"
+                    />
+                  )}
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button variant="ghost" size="icon" onClick={() => startEdit(log)}>
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(log._id)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+            {filteredLogs.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center">
+                  Geen logs gevonden
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    )
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -241,60 +310,7 @@ export function LogSection({ userId, projects, logs, onLogsChange, isLoading }: 
           </Button>
         </div>
 
-        {isLoading ? (
-          <div className="text-center py-4">Laden...</div>
-        ) : (
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Datum</TableHead>
-                  <TableHead>Uren</TableHead>
-                  <TableHead>Project</TableHead>
-                  <TableHead>Opmerkingen</TableHead>
-                  <TableHead>Foto</TableHead>
-                  <TableHead className="text-right">Acties</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredLogs.map((log) => (
-                  <TableRow key={log._id}>
-                    <TableCell>{format(new Date(log.date), "dd MMMM yyyy", { locale: nl })}</TableCell>
-                    <TableCell>{log.hours}</TableCell>
-                    <TableCell>{log.projectId.name}</TableCell>
-                    <TableCell>{log.remarks}</TableCell>
-                    <TableCell>
-                      {log.photoUrl && (
-                        <Image
-                          src={log.photoUrl || "/placeholder.svg"}
-                          alt="Log photo"
-                          width={50}
-                          height={50}
-                          className="rounded-md"
-                        />
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => startEdit(log)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(log._id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {filteredLogs.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center">
-                      Geen logs gevonden
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        )}
+        {renderLogs()}
       </CardContent>
     </Card>
   )
